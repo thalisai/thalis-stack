@@ -1,0 +1,3 @@
+FROM ollama/ollama:latest AS build-ollama
+
+# noop

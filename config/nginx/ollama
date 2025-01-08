@@ -1,0 +1,11 @@
+server {
+    server_name ollama.thalis.local;
+
+    location / {
+        proxy_pass http://ollama:11434;
+        include proxy_params;
+    }
+
+    listen 8080;
+    listen [::]:8080;
+}

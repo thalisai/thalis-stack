@@ -1,0 +1,67 @@
+networks:
+  thalis-stack:
+    driver: bridge
+    attachable: true
+
+services:
+  comfyui:
+    image: thalis/comfyui
+    build:
+      context: .
+      dockerfile: containers/Dockerfile.comfyui
+    environment:
+      - HF_HOME=/var/lib/hf
+    networks:
+      - thalis-stack
+    ports:
+      - "8188:8188"
+    volumes:
+      - ~/.thalis/data/comfyui:/var/lib/comfyui
+      - ~/.thalis/data/hf:/var/lib/hf
+  manager:
+    image: thalis/manager
+    networks:
+      - thalis-stack
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./config/manager.yaml:/opt/manager/config.yaml
+      - ~/.thalis/data/comfyui:/var/lib/comfyui
+      - ~/.thalis/data/manager:/var/lib/manager
+  nginx:
+    image: thalis/nginx
+    build:
+      context: .
+      dockerfile: containers/Dockerfile.nginx
+    networks:
+      - thalis-stack
+    ports:
+      - "80:8080"
+  ollama:
+    image: thalis/ollama
+    build:
+      context: .
+      dockerfile: containers/Dockerfile.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+      - OLLAMA_MODELS=/var/lib/ollama/models
+    networks:
+      - thalis-stack
+    ports:
+      - "11434:11434"
+    volumes:
+      - ~/.thalis/data/ollama:/var/lib/ollama
+  open-webui:
+    image: thalis/open-webui
+    build:
+      context: .
+      dockerfile: containers/Dockerfile.open-webui
+    environment:
+      - HF_HOME=/var/lib/hf
+    networks:
+      - thalis-stack
+    ports:
+      - "8090:8090"
+    volumes:
+      - ~/.thalis/data/open-webui:/var/lib/open-webui
+      - ~/.thalis/data/hf:/var/lib/hf

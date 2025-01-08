@@ -1,0 +1,14 @@
+FROM pytorch/pytorch:2.4.1-cuda12.4-cudnn9-runtime
+
+RUN apt-get update && apt-get install -y \
+    build-essential git \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN git clone https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI.git /opt/rvc
+
+RUN cd /opt/rvc \
+ && python3 -m venv venv \
+ && . venv/bin/activate \
+ && sed -i 's/^numba==.*/numba/' requirements.txt \
+ && sed -i 's/^llvmlite==.*/llvmlite/' requirements.txt \
+ && pip install -r requirements.txt

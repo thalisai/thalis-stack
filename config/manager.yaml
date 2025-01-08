@@ -1,0 +1,27 @@
+stack:
+  text:
+    enabled: true
+    unload: [text, image]
+    models:
+      - model: mannix/llama3.1-8b-abliterated:q4_k_m
+        tags: [llama, small]
+      - model: huihui_ai/llama3.3-abliterated:70b-instruct-q4_K_M
+        tags: [llama, medium]
+
+  image:
+    enabled: true
+    unload: [text, image]
+    models:
+      - model: sdxl-realcartoon-pony.safetensors
+        source: https://models.thalis.dev/sdxl-realcartoon-pony.safetensors
+        tags: [sdxl, small]
+      - model: flux-dev-fp8.safetensors
+        source: https://models.thalis.dev/flux-dev-fp8.safetensors
+        tags: [flux, medium]
+
+  prompt:
+    model: mannix/llama3.1-8b-abliterated:q4_k_m
+    networks: []
+    template: |
+      Generate an image prompt based on the following text:
+      {{ text }}

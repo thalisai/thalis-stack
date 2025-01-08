@@ -1,0 +1,11 @@
+server {
+    server_name open-webui.thalis.local;
+
+    location / {
+        proxy_pass http://open-webui:8090;
+        include proxy_params;
+    }
+
+    listen 8080;
+    listen [::]:8080;
+}

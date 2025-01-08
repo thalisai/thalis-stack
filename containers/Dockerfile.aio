@@ -1,0 +1,117 @@
+FROM pytorch/pytorch:2.4.1-cuda12.4-cudnn9-runtime AS build-comfy
+
+# Install ComfyUI
+RUN apt-get update && apt-get install -y git
+
+RUN git clone https://github.com/comfyanonymous/ComfyUI.git /opt/comfyui
+
+# Remove PyTorch from requirements.txt
+RUN sed -i '/torch/d' /opt/comfyui/requirements.txt
+
+RUN cd /opt/comfyui \
+ && python3 -m venv venv \
+ && . venv/bin/activate \
+ && pip install --ignore-installed --upgrade-strategy only-if-needed torchaudio torchsde -r requirements.txt
+
+FROM pytorch/pytorch:2.4.1-cuda12.4-cudnn9-runtime AS build-melotts
+
+# Install MeloTTS
+RUN apt-get update && apt-get install -y \
+    build-essential git libsndfile1 \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN git clone https://github.com/myshell-ai/MeloTTS.git /opt/melotts
+
+RUN cd /opt/melotts \
+ && python3 -m venv venv \
+ && . venv/bin/activate \
+ && pip install -e .
+
+RUN cd /opt/melotts \
+ && python3 -m venv venv \
+ && . venv/bin/activate \
+ && python -m unidic download
+
+RUN cd /opt/melotts \
+ && python3 -m venv venv \
+ && . venv/bin/activate \
+ && python melo/init_downloads.py
+
+# Install RVC
+
+FROM pytorch/pytorch:2.4.1-cuda12.4-cudnn9-runtime AS build-rvc
+
+RUN apt-get update && apt-get install -y \
+    build-essential git \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN git clone https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI.git /opt/rvc
+
+RUN cd /opt/rvc \
+ && python3 -m venv venv \
+ && . venv/bin/activate \
+ && sed -i 's/^numba==.*/numba/' requirements.txt \
+ && sed -i 's/^llvmlite==.*/llvmlite/' requirements.txt \
+ && pip install -r requirements.txt
+
+# TODO: copy RVC server files
+
+FROM pytorch/pytorch:2.4.1-cuda12.4-cudnn9-runtime AS build-open-webui
+
+# Install open-webui
+RUN mkdir /opt/open-webui \
+ && cd /opt/open-webui \
+ && python3 -m venv venv \
+ && . venv/bin/activate \
+ && pip install open-webui
+
+FROM pytorch/pytorch:2.4.1-cuda12.4-cudnn9-runtime AS run
+
+# Install ffmpeg, git, etc
+RUN apt-get update && apt-get install -y \
+    curl \
+    ffmpeg \
+    git \
+    build-essential \
+    libsndfile1 \
+    nginx \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Ollama
+RUN curl -fsSL https://ollama.com/install.sh | sh
+
+# Install supervisord
+RUN mkdir /opt/supervisord \
+ && cd /opt/supervisord \
+ && python3 -m venv venv \
+ && . venv/bin/activate \
+ && pip install supervisor
+
+# Copy RVC
+COPY --from=build-rvc /opt/rvc /opt/rvc
+
+# Copy open-webui
+COPY --from=build-open-webui /opt/open-webui /opt/open-webui
+COPY config/open-webui.env /opt/open-webui/.env
+
+# Copy ComfyUI
+COPY --from=build-comfy /opt/comfyui /opt/comfyui
+COPY config/comfyui/extra_model_paths.yaml /opt/comfyui/extra_model_paths.yaml
+
+# Configure supervisord
+COPY config/supervisord.conf /opt/supervisord/supervisord.conf
+
+# Configure nginx
+RUN unlink /etc/nginx/sites-enabled/default
+RUN echo "daemon off;" >> /etc/nginx/nginx.conf
+COPY config/nginx/* /etc/nginx/sites-enabled/
+
+# Copy scripts
+COPY scripts/main.sh /opt/scripts/main.sh
+COPY scripts/pull_* /opt/scripts/
+COPY scripts/run_comfyui.sh /opt/comfyui/run.sh
+COPY scripts/run_ollama.sh /opt/ollama/run.sh
+COPY scripts/run_open-webui.sh /opt/open-webui/run.sh
+
+# Run supervisord
+CMD ["/opt/scripts/main.sh"]

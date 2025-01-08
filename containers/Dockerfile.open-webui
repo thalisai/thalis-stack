@@ -1,0 +1,13 @@
+FROM pytorch/pytorch:2.4.1-cuda12.4-cudnn9-runtime
+
+# Install open-webui
+RUN mkdir /opt/open-webui \
+ && cd /opt/open-webui \
+ && python3 -m venv venv \
+ && . venv/bin/activate \
+ && pip install open-webui
+
+COPY config/open-webui.env /opt/open-webui/.env
+COPY scripts/run_open-webui.sh /opt/open-webui/run.sh
+
+ENTRYPOINT [ "/opt/open-webui/run.sh" ]

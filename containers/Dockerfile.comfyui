@@ -1,0 +1,19 @@
+FROM pytorch/pytorch:2.4.1-cuda12.4-cudnn9-runtime
+
+# Install ComfyUI
+RUN apt-get update && apt-get install -y git
+
+RUN git clone https://github.com/comfyanonymous/ComfyUI.git /opt/comfyui
+
+# Remove PyTorch from requirements.txt
+RUN sed -i '/torch/d' /opt/comfyui/requirements.txt
+
+RUN cd /opt/comfyui \
+ && python3 -m venv venv \
+ && . venv/bin/activate \
+ && pip install --ignore-installed --upgrade-strategy only-if-needed torchaudio torchsde -r requirements.txt
+
+COPY config/comfyui/extra_model_paths.yaml /opt/comfyui/extra_model_paths.yaml
+COPY scripts/run_comfyui.sh /opt/comfyui/run.sh
+
+ENTRYPOINT [ "/opt/comfyui/run.sh" ]
