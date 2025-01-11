@@ -65,17 +65,3 @@ services:
     volumes:
       - ~/.thalis/data/open-webui:/var/lib/open-webui
       - ~/.thalis/data/hf:/var/lib/hf
-  rvc:
-    image: ghcr.io/thalisai/thalis-rvc:main
-    build:
-      context: .
-      dockerfile: containers/Dockerfile.rvc
-    environment:
-      - HF_HOME=/var/lib/hf
-    networks:
-      - thalis-stack
-    ports:
-      - "8100:8100"
-    volumes:
-      - ~/.thalis/data/rvc:/var/lib/rvc
-      - ~/.thalis/data/hf:/var/lib/hf
