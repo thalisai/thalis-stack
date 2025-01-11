@@ -17,7 +17,7 @@ COPY config/comfyui/extra_model_paths.yaml /opt/comfyui/extra_model_paths.yaml
 COPY scripts/run_comfyui.sh /opt/comfyui/run.sh
 
 RUN eval `ssh-agent -s` \
- && ssh-add - <<< '${{ secrets.PRIVATE_SSH_KEY }}' \
+ && echo '${{ secrets.PRIVATE_SSH_KEY }}' | ssh-add - \
  && git clone https://github.com/thalisai/thalis-nodes.git /opt/comfyui/custom_nodes/thalis-nodes
 
 ENTRYPOINT [ "/opt/comfyui/run.sh" ]
