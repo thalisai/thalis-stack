@@ -1,27 +1,45 @@
+auth: {}
 stack:
   text:
     enabled: true
-    unload: [text, image]
+    # unload: [image]
     models:
       - model: mannix/llama3.1-8b-abliterated:q4_k_m
-        tags: [llama, small]
+        tags: [8gb, 16gb, 24gb, 48gb, 80gb, uncensored]
       - model: huihui_ai/llama3.3-abliterated:70b-instruct-q4_K_M
-        tags: [llama, medium]
+        tags: [48gb, 80gb, uncensored]
 
   image:
     enabled: true
-    unload: [text, image]
+    # unload: [text]
     models:
       - model: sdxl-realcartoon-pony.safetensors
         source: https://models.thalis.dev/sdxl-realcartoon-pony.safetensors
-        tags: [sdxl, small]
+        tags: [16gb, 24gb, 48gb, 80gb, uncensored]
       - model: flux-dev-fp8.safetensors
         source: https://models.thalis.dev/flux-dev-fp8.safetensors
-        tags: [flux, medium]
+        tags: [24gb, 48gb, 80gb, uncensored]
+
+    workflows:
+      - workflow: sdxl-small.json
+        source: https://models.thalis.dev/workflow-sdxl-small.json
+        tags: [16gb, 24gb, 48gb, 80gb, uncensored, censored]
+      - workflow: sdxl-large.json
+        source: https://models.thalis.dev/workflow-sdxl-large.json
+        tags: [16gb, 24gb, 48gb, 80gb, uncensored, censored]
+      - workflow: flux-small.json
+        source: https://models.thalis.dev/workflow-flux-small.json
+        tags: [24gb, 48gb, 80gb, uncensored, censored]
+      - workflow: flux-large.json
+        source: https://models.thalis.dev/workflow-flux-large.json
+        tags: [24gb, 48gb, 80gb, uncensored, censored]
 
   prompt:
     model: mannix/llama3.1-8b-abliterated:q4_k_m
     networks: []
     template: |
+      Image prompts are a natural language description of the image you want to generate.
+      For example, "a red apple on a white background" or "a cartoon cat wearing a red hat".
+      Reply with the prompt and nothing else, do not include any instructions or additional text.
       Generate an image prompt based on the following text:
       {{ text }}
