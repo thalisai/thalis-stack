@@ -18,13 +18,18 @@ jobs:
       matrix:
         image: [comfyui, nginx] # , rvc]
     steps:
-      - name: Maximize build space
-        uses: easimon/maximize-build-space@master
-        with:
-          root-reserve-mb: 35000
-          # swap-size-mb: 1024
-          remove-dotnet: 'true'
-          remove-android: 'true'
+      - name: Remove unused software
+        run: |
+          echo "Available storage before:"
+          sudo df -h
+          echo
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          echo "Available storage after:"
+          sudo df -h
+          echo
 
       - name: Check out the repo
         uses: actions/checkout@v4
