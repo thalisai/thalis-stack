@@ -69,6 +69,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           ssh: default=${{ env.SSH_AUTH_SOCK }}
+          cache-from: type=registry,ref=${{ steps.cache-meta.outputs.tags }}
+          cache-to: type=registry,ref=${{ steps.cache-meta.outputs.tags }},mode=max
 
       # name: Generate artifact attestation
       # uses: actions/attest-build-provenance@v2
