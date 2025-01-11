@@ -16,6 +16,8 @@ RUN cd /opt/comfyui \
 COPY config/comfyui/extra_model_paths.yaml /opt/comfyui/extra_model_paths.yaml
 COPY scripts/run_comfyui.sh /opt/comfyui/run.sh
 
-RUN git clone git@github.com:thalisai/thalis-nodes.git /opt/comfyui/custom_nodes/thalis-nodes
+RUN mkdir ~/.ssh \
+ && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts \
+ && git clone git@github.com:thalisai/thalis-nodes.git /opt/comfyui/custom_nodes/thalis-nodes
 
 ENTRYPOINT [ "/opt/comfyui/run.sh" ]
