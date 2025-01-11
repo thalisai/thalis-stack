@@ -16,7 +16,7 @@ jobs:
       id-token: write
     strategy:
       matrix:
-        image: [comfyui, nginx, rvc]
+        image: [comfyui, nginx] # , rvc]
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
