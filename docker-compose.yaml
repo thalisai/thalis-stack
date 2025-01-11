@@ -45,7 +45,7 @@ services:
     ports:
       - "8001:80"
   ollama:
-    image: ollama/ollama:latest # thalis/ollama
+    image: ghcr.io/thalisai/thalis-ollama:main
     build:
       context: .
       dockerfile: containers/Dockerfile.ollama
