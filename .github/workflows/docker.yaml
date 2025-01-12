@@ -58,6 +58,8 @@ jobs:
         with:
           images: |
             ghcr.io/thalisai/thalis-${{ matrix.image }}
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
 
       - name: Build and push Docker images
         id: push
@@ -68,8 +70,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ steps.meta.outputs.tags }}
-          cache-to: type=registry,ref=${{ steps.meta.outputs.tags }},mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           provenance: false
 
       # name: Generate artifact attestation
