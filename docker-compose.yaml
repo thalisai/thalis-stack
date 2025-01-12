@@ -72,6 +72,7 @@ services:
     #  dockerfile: containers/Dockerfile.open-webui
     environment:
       - HF_HOME=/var/lib/hf
+      - MANAGER_HOST=manager:8000
     networks:
       - thalis-stack
     ports:
