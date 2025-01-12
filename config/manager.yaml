@@ -13,25 +13,31 @@ stack:
     enabled: true
     # unload: [text]
     models:
-      - model: sdxl-realcartoon-pony.safetensors
+      - folder: checkpoints
+        model: sdxl-realcartoon-pony.safetensors
         source: https://models.thalis.dev/sdxl-realcartoon-pony.safetensors
         tags: [16gb, 24gb, 48gb, 80gb, uncensored]
-      - model: flux-dev-fp8.safetensors
+      - folder: checkpoints
+        model: flux-dev-fp8.safetensors
         source: https://models.thalis.dev/flux-dev-fp8.safetensors
         tags: [24gb, 48gb, 80gb, uncensored]
+      - folder: upscale_models
+        model: lexica-swinir-2x.pth
+        source: https://models.thalis.dev/lexica-swinir-2x.pth
+        tags: [8gb, 16gb, 24gb, 48gb, 80gb, uncensored, censored]
 
     workflows:
       - workflow: sdxl-small.json
-        source: https://models.thalis.dev/workflow-sdxl-small.json
+        source: https://models.thalis.dev/workflows/sdxl-small.json
         tags: [16gb, 24gb, 48gb, 80gb, uncensored, censored]
       - workflow: sdxl-large.json
-        source: https://models.thalis.dev/workflow-sdxl-large.json
+        source: https://models.thalis.dev/workflows/sdxl-large.json
         tags: [16gb, 24gb, 48gb, 80gb, uncensored, censored]
       - workflow: flux-small.json
-        source: https://models.thalis.dev/workflow-flux-small.json
+        source: https://models.thalis.dev/workflows/flux-small.json
         tags: [24gb, 48gb, 80gb, uncensored, censored]
       - workflow: flux-large.json
-        source: https://models.thalis.dev/workflow-flux-large.json
+        source: https://models.thalis.dev/workflows/flux-large.json
         tags: [24gb, 48gb, 80gb, uncensored, censored]
 
   prompt:
