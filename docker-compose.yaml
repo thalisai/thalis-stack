@@ -68,7 +68,7 @@ services:
     image: ghcr.io/thalisai/thalis-webui:thalis-main
     environment:
       - HF_HOME=/var/lib/hf
-      - MANAGER_HOST=manager:8000
+      - MANAGER_HOST=http://manager:8000
     networks:
       - thalis-stack
     ports:
