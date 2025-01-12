@@ -61,22 +61,21 @@ jobs:
         env:
           DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
 
-      - name: Build and push Docker images
+      - name: Build Docker images
         id: push
         uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
         with:
           context: .
           file: containers/Dockerfile.${{ matrix.image }}
-          push: true
+          load: true
+          pull: true
+          push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          provenance: false
+          provenance: false # do not enable, docker is very broken
 
-      # name: Generate artifact attestation
-      # uses: actions/attest-build-provenance@v2
-      # with:
-      #   subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
-      #   subject-digest: ${{ steps.push.outputs.digest }}
-      #   push-to-registry: true
+      - name: Push Docker images to ghcr.io
+        run: |
+          docker push ${{ steps.meta.outputs.tags }}
