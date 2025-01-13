@@ -1,8 +1,6 @@
 # FROM pytorch/pytorch:2.4.1-cuda12.4-cudnn9-runtime
 FROM python:3.11-slim
 
-ARG nodes_hash=main
-
 # Install ComfyUI
 RUN apt-get update && apt-get install -y git openssh-client
 
@@ -15,6 +13,8 @@ RUN cd /opt/comfyui \
 
 COPY config/comfyui/extra_model_paths.yaml /opt/comfyui/extra_model_paths.yaml
 COPY scripts/run_comfyui.sh /opt/comfyui/run.sh
+
+ARG nodes_hash=main
 
 RUN echo "${nodes_hash}" > /opt/comfyui/custom_nodes/nodes_hash.txt \
  && git clone https://github.com/thalisai/thalis-nodes.git /opt/comfyui/custom_nodes/thalis-nodes
