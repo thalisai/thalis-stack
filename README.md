@@ -31,7 +31,8 @@ Key features of the Thalis AI stack include:
   - [Overview](#overview)
   - [Contents](#contents)
   - [Getting Started](#getting-started)
-    - [Docker Compose](#docker-compose)
+    - [Run with Docker Compose](#run-with-docker-compose)
+    - [Download Models \& Workflows](#download-models--workflows)
   - [Architecture](#architecture)
     - [Generators](#generators)
     - [Manager](#manager)
@@ -44,7 +45,7 @@ Key features of the Thalis AI stack include:
 
 ## Getting Started
 
-### Docker Compose
+### Run with Docker Compose
 
 The Thalis AI stack can be run using Docker Compose. To get started, clone the repository and run the following command:
 
@@ -53,6 +54,27 @@ docker-compose up
 ```
 
 The default configuration will store data under `~/.thalis/data` and expose the web interface on port `8080`.
+
+To change the data directory, set the `THALIS_DATA` environment variable or in the `.env` file:
+
+```bash
+THALIS_DATA=/path/to/data
+```
+
+Continue to the next section to download models and workflows before using the web interface.
+
+### Download Models & Workflows
+
+Once the web UI has started, you can download models and workflows from the admin settings.
+
+Navigate to the admin settings at `/admin/settings` or by clicking on the avatar menu in the top right corner, and make
+sure you have the `Manager` tab selected.
+
+Select how much memory your GPU or GPUs have and whether you want to use censored models or not, then click
+`Sync Models` to download the default models and workflows. This will take a little while, so please be patient.
+
+*Note:* We will be working on simplifying and automating this process in future versions, but for now, please make sure
+you sync the models before trying to chat or generate images.
 
 ## Architecture
 
@@ -76,17 +98,18 @@ including multi-GPU setups for faster processing and distributed deployments for
 ### Generators
 
 - Audio:
-  - SpeechT5
+  - **SpeechT5**
     - Offers high-quality text-to-speech synthesis
-  - RVC
+  - _Coming soon: **RVC**_
     - Unique voice skinning for custom character voices
 - Images:
-  - ComfyUI
-    - High resolution image generation
+  - **ComfyUI**
+    - High resolution image generation using Stable Diffusion and Flux models
 - Text:
-  - Ollama
+  - **Ollama**
     - Streaming text generation
-  - Coming soon: vLLM
+  - _Coming soon: **vLLM**_
+    - Streaming text generation with multi-GPU support
 
 ### Manager
 
