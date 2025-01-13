@@ -47,15 +47,25 @@ jobs:
       # get commit hash for the nodes
       - name: Get commit hash for the nodes
         if: matrix.image == 'comfyui'
-        id: commit_hash
+        id: commit_hash_comfyui
         run: echo "::set-output name=nodes_hash::$(git rev-parse HEAD)"
         working-directory: nodes
 
       - name: Placeholder hash for other jobs
         if: matrix.image != 'comfyui'
-        id: commit_hash
+        id: commit_hash_other
         run: echo "::set-output name=nodes_hash::placeholder"
 
+      - name: Consolidate hash
+        id: commit_hash
+        run: |
+          if [ "${{ matrix.image }}" == "comfyui" ]; then
+            echo "::set-output name=nodes_hash::${{ steps.commit_hash_comfyui.outputs.nodes_hash }}"
+          else
+            echo "::set-output name=nodes_hash::${{ steps.commit_hash_other.outputs.nodes_hash }}"
+          fi
+
+      # container building stuff
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
