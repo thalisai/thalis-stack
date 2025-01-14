@@ -54,7 +54,7 @@ services:
           devices:
             - driver: nvidia
               capabilities: [gpu]
-              device_ids: ['0']
+              device_ids: ['1']
     environment:
       - OLLAMA_HOST=0.0.0.0:11434
       - OLLAMA_MODELS=/var/lib/ollama/models
